@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community - Here Am</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(135deg, #FFFFFF, #FFE4E1); margin: 0; font-family: 'Poppins', sans-serif;}
+    .nav-icon { width: 20px; height: 20px; margin-right: 8px; transition: transform 0.3s ease;}
+    .nav-link:hover .nav-icon { transform: scale(1.2);}
+    .social-icon { width: 24px; height: 24px; margin: 0 8px; transition: transform 0.3s ease;}
+    .social-icon:hover { transform: scale(1.2);}
+    .card { transition: transform 0.3s ease, box-shadow 0.3s ease;}
+    .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);}
+    .fade-in { opacity: 0; animation: fadeIn 1s ease forwards;}
+    @keyframes fadeIn { to { opacity: 1; } }
+    .wave { position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23F06292' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E"); background-size: cover;}
+    .chat-container { height: 400px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #F06292 #FFE4E1;}
+    .chat-container::-webkit-scrollbar { width: 8px;}
+    .chat-container::-webkit-scrollbar-track { background: #FFE4E1;}
+    .chat-container::-webkit-scrollbar-thumb { background-color: #F06292; border-radius: 20px;}
+    .message { max-width: 70%; word-wrap: break-word; margin-bottom: 8px;}
+    .sent { background-color: #F06292; color: white; border-radius: 18px 18px 0 18px;}
+    .received { background-color: #f0f0f0; color: #333; border-radius: 18px 18px 18px 0;}
+    .typing-indicator { display: flex; padding: 5px 15px; background-color: #f0f0f0; border-radius: 20px; width: fit-content; margin-bottom: 8px;}
+    .typing-dot { width: 8px; height: 8px; background-color: #888; border-radius: 50%; margin: 0 2px; animation: typingAnimation 1.4s infinite ease-in-out;}
+    @keyframes typingAnimation { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; margin-right: 8px;}
+    .user-list { max-height: 300px; overflow-y: auto;}
+    .user-item { transition: all 0.3s ease; cursor: pointer;}
+    .user-item:hover { background-color: rgba(240, 98, 146, 0.1);}
+    .user-item.active { background-color: rgba(240, 98, 146, 0.2);}
+    .chat-tab { padding: 8px 12px; border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s ease;}
+    .chat-tab.active { background-color: white; color: #F06292; font-weight: 600;}
+    .chat-tab.unread::after { content: ''; display: inline-block; width: 8px; height: 8px; background-color: #F06292; border-radius: 50%; margin-left: 5px;}
+  
+    @media (max-width: 1024px) {
+      .max-w-7xl { padding-left: 1rem !important; padding-right: 1rem !important; }
+    }
+    @media (max-width: 900px) {
+      .chat-container { height: 300px; }
+    }
+    @media (max-width: 768px) {
+      .max-w-7xl { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+      .chat-container { height: 250px; }
+      .rounded-xl { border-radius: 0.75rem !important; }
+      .card { padding: 1rem !important; }
+      h2, .text-3xl { font-size: 1.5rem !important; }
+      .text-xl { font-size: 1.15rem !important; }
+      .text-lg { font-size: 1rem !important; }
+    }
+    @media (max-width: 640px) {
+      .max-w-7xl, main, footer, header, section { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+      .grid-cols-3 { grid-template-columns: 1fr !important; }
+      .lg\:col-span-2, .lg\:col-span-1 { grid-column: span 1 / span 1 !important; }
+      .p-6 { padding: 1rem !important; }
+      .chat-container { height: 200px; }
+    }
+    @media (max-width: 480px) {
+      .rounded-xl, .rounded-lg { border-radius: 0.5rem !important; }
+      .message { font-size: 0.9rem; }
+      .user-avatar { width: 28px; height: 28px; font-size: 0.95rem; }
+      .p-6, .px-6, .py-6 { padding: 0.5rem !important; }
+      .mb-6 { margin-bottom: 1rem !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <header class="bg-pink-400 shadow-lg">
+    <div class="max-w-7xl mx-auto py-4 px-6 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-white flex items-center">
+        <svg class="w-8 h-8 mr-2" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 0 0-7.2 16.8L12 22l7.2-3.2A10 10 0 0 0 12 2zm0 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+        </svg>
+        Here Am
+      </h1>
+      <div class="md:hidden">
+        <button id="hamburger" class="text-white focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+          </svg>
+        </button>
+      </div>
+      <nav id="nav-menu" class="hidden md:flex flex-wrap space-x-4">
+        <a href="home.html" class="text-white hover:text-gray-200 flex items-center nav-link">Home</a>
+        <a href="guide.html" class="text-white hover:text-gray-200 flex items-center nav-link">Guide</a>
+        <a href="emergency.html" class="text-white hover:text-gray-200 flex items-center nav-link">Emergency</a>
+        <a href="safest-path.html" class="text-white hover:text-gray-200 flex items-center nav-link">Safe Path</a>
+        <a href="share-live-location.html" class="text-white hover:text-gray-200 flex items-center nav-link">Share Location</a>
+        <a href="sos.html" class="text-white hover:text-gray-200 flex items-center nav-link">SOS</a>
+        <a href="community.html" class="text-white hover:text-gray-200 flex items-center nav-link">Community</a>
+        <a href="chatbot.html" class="text-white hover:text-gray-200 flex items-center nav-link">AI Chatbot</a>
+        <a href="about-us.html" class="text-white hover:text-gray-200 flex items-center nav-link">About Us</a>
+      </nav>
+    </div>
+  </header>
+  <main class="max-w-7xl mx-auto py-8 px-6 flex-grow relative">
+    <h2 class="text-3xl font-bold text-pink-500 mb-6 fade-in">Community Hub</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Community Info Section -->
+      <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white p-6 rounded-xl shadow card fade-in">
+          <h3 class="text-xl font-semibold text-pink-500 mb-4">Welcome to Our Community</h3>
+          <p class="text-gray-600 mb-4">Connect with others, share experiences, and support each other in our safe community space.</p>
+          <div class="mb-4">
+            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Choose a Display Name</label>
+            <input type="text" id="username" placeholder="Your display name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
+          </div>
+          <button id="joinChat" class="w-full bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition">Join Chat</button>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow card fade-in">
+          <h3 class="text-xl font-semibold text-pink-500 mb-4">Active Community Members</h3>
+          <div class="user-list space-y-3"></div>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow card fade-in">
+          <h3 class="text-xl font-semibold text-pink-500 mb-4">Community Guidelines</h3>
+          <ul class="text-gray-600 space-y-2">
+            <li class="flex items-start">
+              <svg class="w-5 h-5 text-pink-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              Be respectful to all members
+            </li>
+            <li class="flex items-start">
+              <svg class="w-5 h-5 text-pink-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              No sharing of personal information
+            </li>
+            <li class="flex items-start">
+              <svg class="w-5 h-5 text-pink-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              Keep conversations safe and supportive
+            </li>
+            <li class="flex items-start">
+              <svg class="w-5 h-5 text-pink-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              Report any inappropriate behavior
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Chat Section -->
+      <div class="lg:col-span-2">
+        <div class="bg-white p-6 rounded-xl shadow card fade-in h-full flex flex-col">
+          <div class="flex space-x-2 mb-4 border-b border-gray-200 pb-2 flex-wrap">
+            <div id="communityTab" class="chat-tab active" data-chat="community">Community Chat</div>
+          </div>
+          <div id="chatContainer" class="chat-container flex-grow mb-4 p-4 bg-gray-50 rounded-lg overflow-y-auto">
+            <div id="welcomeMessage" class="text-center text-gray-500 py-10">
+              <svg class="w-12 h-12 mx-auto mb-4 text-pink-300" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 2.07 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+              </svg>
+              <p class="text-lg">Welcome to our community chat!</p>
+              <p class="mt-2">Please choose a display name and join the conversation.</p>
+            </div>
+            <div id="chatMessages" class="space-y-3 hidden"></div>
+            <div id="typingIndicator" class="typing-indicator hidden">
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+            </div>
+          </div>
+          <div id="chatForm" class="hidden">
+            <div class="flex space-x-2">
+              <input type="text" id="messageInput" placeholder="Type your message..." class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
+              <button id="sendMessage" class="bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-pink-600 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wave"></div>
+  </main>
+  <footer class="bg-gradient-to-r from-pink-400 to-pink-500 text-white mt-auto">
+    <div class="max-w-7xl mx-auto py-6 px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="flex flex-col items-center md:items-start">
+        <span class="font-semibold mb-2">Here Am &copy; 2025</span>
+        <div class="flex items-center space-x-2">
+          <a href="#" class="social-icon" aria-label="Instagram">
+            <svg fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5.25-.75a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z"/></svg>
+          </a>
+          <a href="#" class="social-icon" aria-label="Facebook">
+            <svg fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path d="M22.675 0h-21.35C.594 0 0 .594 0 1.326v21.348C0 23.406.594 24 1.326 24H12.82v-9.294H9.692v-3.622h3.127V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.797.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116C23.406 24 24 23.406 24 22.674V1.326C24 .594 23.406 0 22.675 0"/></svg>
+          </a>
+          <a href="#" class="social-icon" aria-label="Twitter">
+            <svg fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.897-.959-2.178-1.555-3.594-1.555-2.717 0-4.924 2.208-4.924 4.924 0 .39.043.765.127 1.124-4.09-.205-7.719-2.165-10.148-5.144-.424.722-.666 1.561-.666 2.475 0 1.708.87 3.216 2.188 4.099-.807-.026-1.566-.247-2.229-.616v.062c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.416-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067C2.292 21.29 5.026 22 7.872 22c9.4 0 14.555-7.779 14.555-14.555 0-.223-.005-.444-.015-.665.999-.721 1.868-1.625 2.542-2.671z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div></div>
+      <div class="flex flex-col items-center md:items-end">
+        <span class="block text-sm">Contact: <a href="mailto:support@heream.com" class="underline">support@heream.com</a></span>
+        <span class="block text-sm">Privacy Policy | Terms of Service</span>
+      </div>
+    </div>
+    <div class="text-center py-4 border-t border-pink-300">
+      <p class="text-sm">© 2025 Here Am. All rights reserved. Made with ❤️</p>
+    </div>
+  </footer>
+  <script>
+    // Hamburger menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+    hamburger?.addEventListener('click', () => { navMenu.classList.toggle('hidden'); });
+
+    const joinChatBtn = document.getElementById('joinChat');
+    const usernameInput = document.getElementById('username');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const sendMessageBtn = document.getElementById('sendMessage');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const userList = document.querySelector('.user-list');
+    const communityTab = document.getElementById('communityTab');
+    const chatTabsContainer = document.querySelector('.flex.space-x-2.mb-4');
+    const chatContainer = document.getElementById('chatContainer');
+    let username = '';
+    let activeChat = 'community';
+    let privateChats = {};
+    let communityMessages = [];
+    const communityMembers = [
+      { id: 'user1', name: "SafetyFirst", avatar: "SF", color: "bg-blue-500", online: true },
+      { id: 'user2', name: "TravelBuddy", avatar: "TB", color: "bg-green-500", online: true },
+      { id: 'user3', name: "NightWalker", avatar: "NW", color: "bg-purple-500", online: true },
+      { id: 'user4', name: "UrbanExplorer", avatar: "UE", color: "bg-yellow-500", online: false },
+      { id: 'user5', name: "CityGuardian", avatar: "CG", color: "bg-red-500", online: true }
+    ];
+    communityMembers.forEach(member => { privateChats[member.id] = []; });
+    const sampleMessages = [
+      { sender: "SafetyFirst", text: "Has anyone taken the new self-defense workshop?", time: "10:30 AM", isCurrentUser: false },
+      { sender: "TravelBuddy", text: "Yes! It was amazing. Learned so many useful techniques.", time: "10:35 AM", isCurrentUser: false },
+      { sender: "NightWalker", text: "I'm planning to go next week. Any tips?", time: "10:37 AM", isCurrentUser: false },
+      { sender: "UrbanExplorer", text: "Absolutely! Wear comfortable clothes, bring water, and don't hesitate to ask questions during the class. The instructors are very supportive.", time: "10:40 AM", isCurrentUser: false }
+    ];
+
+    joinChatBtn.addEventListener('click', () => {
+      username = usernameInput.value.trim();
+      if (username) {
+        welcomeMessage.classList.add('hidden');
+        chatMessages.classList.remove('hidden');
+        chatForm.classList.remove('hidden');
+        communityMessages = [...sampleMessages];
+        renderMessages(communityMessages);
+        setTimeout(() => {
+          showTypingIndicator();
+          setTimeout(() => {
+            hideTypingIndicator();
+            const welcomeMsg = {
+              sender: "CommunityBot", 
+              text: `Welcome to the community, ${username}! Feel free to ask questions or share your experiences.`,
+              time: getCurrentTime(),
+              isCurrentUser: false
+            };
+            addMessageToChat(welcomeMsg.sender, welcomeMsg.text, welcomeMsg.time, false);
+            communityMessages.push(welcomeMsg);
+          }, 2000);
+        }, 1000);
+        renderUserList();
+        messageInput.focus();
+      } else {
+        alert("Please enter a display name");
+      }
+    });
+
+    function renderUserList() {
+      userList.innerHTML = '';
+      communityMembers.forEach(member => {
+        const userItem = document.createElement('div');
+        userItem.className = `user-item flex items-center p-3 rounded-lg ${member.online ? 'opacity-100' : 'opacity-70'}`;
+        userItem.dataset.userId = member.id;
+        const avatar = document.createElement('div');
+        avatar.className = `user-avatar ${member.color} ${member.online ? '' : 'grayscale'}`;
+        avatar.textContent = member.avatar;
+        const userInfo = document.createElement('div');
+        userInfo.className = 'flex-1';
+        const userName = document.createElement('div');
+        userName.className = 'font-medium';
+        userName.textContent = member.name;
+        const userStatus = document.createElement('div');
+        userStatus.className = 'text-xs text-gray-500';
+        userStatus.textContent = member.online ? 'Online' : 'Offline';
+        userInfo.appendChild(userName);
+        userInfo.appendChild(userStatus);
+        userItem.appendChild(avatar);
+        userItem.appendChild(userInfo);
+        if (member.online) {
+          userItem.addEventListener('click', () => {
+            document.querySelectorAll('.user-item').forEach(item => { item.classList.remove('active'); });
+            userItem.classList.add('active');
+            switchToPrivateChat(member.id, member.name);
+          });
+        }
+        userList.appendChild(userItem);
+      });
+    }
+
+    function switchToPrivateChat(userId, userName) {
+      activeChat = userId;
+      document.querySelectorAll('.chat-tab').forEach(tab => { tab.classList.remove('active'); });
+      let tab = document.querySelector(`.chat-tab[data-chat="${userId}"]`);
+      if (!tab) {
+        tab = document.createElement('div');
+        tab.className = 'chat-tab active';
+        tab.textContent = userName;
+        tab.dataset.chat = userId;
+        chatTabsContainer.insertBefore(tab, communityTab);
+        tab.addEventListener('click', () => { switchToPrivateChat(userId, userName); });
+      } else {
+        tab.classList.add('active');
+        tab.classList.remove('unread');
+      }
+      chatMessages.innerHTML = '';
+      if (privateChats[userId].length === 0) {
+        const welcomeMsg = {
+          sender: userName,
+          text: `This is the beginning of your private conversation with ${userName}.`,
+          time: getCurrentTime(),
+          isCurrentUser: false
+        };
+        addMessageToChat(welcomeMsg.sender, welcomeMsg.text, welcomeMsg.time, false);
+        privateChats[userId].push(welcomeMsg);
+      } else {
+        renderMessages(privateChats[userId]);
+      }
+      scrollToBottom();
+      messageInput.focus();
+    }
+
+    communityTab.addEventListener('click', () => {
+      activeChat = 'community';
+      document.querySelectorAll('.chat-tab').forEach(tab => { tab.classList.remove('active'); });
+      communityTab.classList.add('active');
+      chatMessages.innerHTML = '';
+      renderMessages(communityMessages);
+      scrollToBottom();
+      messageInput.focus();
+    });
+
+    function sendMessage() {
+      const messageText = messageInput.value.trim();
+      if (messageText && username) {
+        const message = {
+          sender: username,
+          text: messageText,
+          time: getCurrentTime(),
+          isCurrentUser: true
+        };
+        if (activeChat === 'community') {
+          communityMessages.push(message);
+        } else {
+          privateChats[activeChat].push(message);
+        }
+        addMessageToChat(message.sender, message.text, message.time, true);
+        messageInput.value = '';
+        if (activeChat === 'community') {
+          setTimeout(() => {
+            const randomMember = getRandomOnlineMember();
+            if (randomMember) {
+              showTypingIndicator();
+              setTimeout(() => {
+                hideTypingIndicator();
+                const response = {
+                  sender: randomMember.name,
+                  text: getAutoChatResponse(messageText, randomMember.name),
+                  time: getCurrentTime(),
+                  isCurrentUser: false
+                };
+                addMessageToChat(response.sender, response.text, response.time, false);
+                communityMessages.push(response);
+              }, 1500);
+            }
+          }, 500);
+        } else {
+          setTimeout(() => {
+            const member = communityMembers.find(m => m.id === activeChat);
+            if (member && member.online) {
+              showTypingIndicator();
+              setTimeout(() => {
+                hideTypingIndicator();
+                const response = {
+                  sender: member.name,
+                  text: getAutoChatResponse(messageText, member.name),
+                  time: getCurrentTime(),
+                  isCurrentUser: false
+                };
+                addMessageToChat(response.sender, response.text, response.time, false);
+                privateChats[activeChat].push(response);
+              }, 1500);
+            }
+          }, 500);
+        }
+      }
+    }
+
+    function getAutoChatResponse(message, responderName) {
+      const msg = message.trim().toLowerCase();
+      if (["hi", "hello", "hey", "hii", "heyy", "helo"].includes(msg)) {
+        const greetings = [
+          `Hi! 👋`,
+          `Hello there! Great to see you in the community.`,
+          `Hey! How are you doing today?`,
+          `Hi ${username}, welcome!`,
+          `Hello! Hope you're having a wonderful day.`
+        ];
+        return greetings[Math.floor(Math.random() * greetings.length)];
+      }
+      if (msg.includes("how are you")) {
+        return "I'm doing well, thank you! How about you?";
+      }
+      if (msg.includes("thank")) {
+        return "You're most welcome! 😊";
+      }
+      if (msg.includes("bye")) {
+        return "Bye! Take care and stay safe!";
+      }
+      if (msg.includes("who are you") || msg.includes("your name")) {
+        return `I'm ${responderName}, part of this community.`;
+      }
+      if (msg.includes("help") || msg.includes("support")) {
+        return "Of course! Let us know what you need help with, we're here for you.";
+      }
+      const friendlyDefaults = [
+        "That's interesting! Tell me more.",
+        "Thank you for sharing. 😊",
+        "I'm glad we're connecting here.",
+        "That's a great thought!",
+        "This community is always here for you.",
+        "Can you share more about that?",
+        "I'm listening!",
+        "That's important to talk about. What do you think?",
+        "Absolutely!",
+        "I agree with you."
+      ];
+      return friendlyDefaults[Math.floor(Math.random() * friendlyDefaults.length)];
+    }
+
+    function getCurrentTime() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      return `${hours}:${minutes} ${ampm}`;
+    }
+    function getRandomOnlineMember() {
+      const onlineMembers = communityMembers.filter(m => m.online && m.id !== activeChat);
+      return onlineMembers.length > 0 ? onlineMembers[Math.floor(Math.random() * onlineMembers.length)] : null;
+    }
+    function renderMessages(messages) {
+      chatMessages.innerHTML = '';
+      messages.forEach(msg => { addMessageToChat(msg.sender, msg.text, msg.time, msg.isCurrentUser); });
+      scrollToBottom();
+    }
+    function addMessageToChat(sender, text, time, isCurrentUser) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-3`;
+      if (!isCurrentUser) {
+        const member = communityMembers.find(m => m.name === sender);
+        if (member) {
+          const avatar = document.createElement('div');
+          avatar.className = `user-avatar ${member.color} self-end mb-1`;
+          avatar.textContent = member.avatar;
+          messageDiv.appendChild(avatar);
+        }
+      }
+      const messageContent = document.createElement('div');
+      messageContent.className = `message px-4 py-2 ${isCurrentUser ? 'sent' : 'received'}`;
+      const senderSpan = document.createElement('div');
+      senderSpan.className = 'text-sm font-semibold mb-1';
+      senderSpan.textContent = sender;
+      const textSpan = document.createElement('div');
+      textSpan.className = 'text-base';
+      textSpan.textContent = text;
+      const timeSpan = document.createElement('div');
+      timeSpan.className = 'text-xs mt-1 opacity-70 text-right';
+      timeSpan.textContent = time;
+      messageContent.appendChild(senderSpan);
+      messageContent.appendChild(textSpan);
+      messageContent.appendChild(timeSpan);
+      messageDiv.appendChild(messageContent);
+      chatMessages.appendChild(messageDiv);
+      scrollToBottom();
+    }
+    function showTypingIndicator() {
+      typingIndicator.classList.remove('hidden');
+      scrollToBottom();
+    }
+    function hideTypingIndicator() {
+      typingIndicator.classList.add('hidden');
+    }
+    function scrollToBottom() {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    sendMessageBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+    if (chatForm) {
+      chatForm.addEventListener('transitionend', () => {
+        if (!chatForm.classList.contains('hidden')) {
+          messageInput.focus();
+        }
+      });
+    }
+  </script>
+</body>
+</html>

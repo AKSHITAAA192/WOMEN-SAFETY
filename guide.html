@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide - Here Am</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      min-width: 0;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background: linear-gradient(135deg, #FFFFFF, #FFE4E1);
+      font-family: 'Poppins', sans-serif;
+    }
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      transition: transform 0.3s ease;
+    }
+    .nav-link:hover .nav-icon {
+      transform: scale(1.2);
+    }
+    .social-icon {
+      width: 24px;
+      height: 24px;
+      margin: 0 8px;
+      transition: transform 0.3s ease;
+    }
+    .social-icon:hover {
+      transform: scale(1.2);
+    }
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 1s ease forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    .video-card {
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .video-card:hover {
+      transform: scale(1.04) translateY(-6px);
+      box-shadow: 0 12px 32px rgba(240,98,146,0.16), 0 2px 8px rgba(0,0,0,0.06);
+      z-index: 2;
+    }
+    .video-thumb {
+      aspect-ratio: 16/9;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(240,98,146,0.12);
+      border: 3px solid #fff;
+      transition: border 0.3s;
+    }
+    .video-card:hover .video-thumb {
+      border: 3px solid #f06292;
+    }
+    .play-anim {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      background: rgba(255,255,255,0.92);
+      border-radius: 50%;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(240,98,146,0.18);
+      transition: background 0.2s;
+      z-index: 1;
+      opacity: 0.95;
+    }
+    .video-card:hover .play-anim {
+      background: #f06292;
+      opacity: 1;
+    }
+    .play-anim svg {
+      width: 28px;
+      height: 28px;
+      fill: #f06292;
+      transition: fill 0.2s;
+    }
+    .video-card:hover .play-anim svg {
+      fill: #fff;
+    }
+
+    /* RESPONSIVE OVERRIDES */
+    @media (max-width: 1024px) {
+      .max-w-7xl {
+        max-width: 100vw !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+    }
+    @media (max-width: 768px) {
+      main, footer, header, section {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+      .card, .video-card, .swiper-slide {
+        border-radius: 0.75rem !important;
+      }
+      .swiper-slide {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+      }
+      .video-card {
+        min-width: 0 !important;
+        width: 100% !important;
+      }
+    }
+    @media (max-width: 640px) {
+      .max-w-7xl, main, footer, header, section {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+      }
+      .swiper-slide {
+        padding: 0.25rem !important;
+      }
+      .video-thumb {
+        border-radius: 0.75rem !important;
+      }
+      .video-card {
+        padding: 0.5rem !important;
+      }
+      .rounded-2xl, .rounded-xl {
+        border-radius: 0.75rem !important;
+      }
+      .flex, .items-center {
+        flex-wrap: wrap;
+      }
+    }
+    @media (max-width: 480px) {
+      h1, .text-2xl, .text-xl, .text-lg, .font-bold, .font-semibold {
+        font-size: 1rem !important;
+      }
+      .h-56, .md\:h-72 {
+        height: 8rem !important;
+      }
+      .swiper-slide, .card, .video-card {
+        padding: 0.25rem !important;
+      }
+      .w-32, .h-32 {
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+</head>
+<body class="min-h-screen flex flex-col">
+  <header class="bg-pink-400 shadow-lg">
+    <div class="max-w-7xl mx-auto py-4 px-6 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-white flex items-center">
+        <svg class="w-8 h-8 mr-2" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 0 0-7.2 16.8L12 22l7.2-3.2A10 10 0 0 0 12 2zm0 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+        </svg>
+        Here Am
+      </h1>
+      <div class="md:hidden">
+        <button id="hamburger" class="text-white focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+          </svg>
+        </button>
+      </div>
+      <nav id="nav-menu" class="hidden md:flex space-x-4">
+        <a href="home.html" class="text-white hover:text-gray-200 flex items-center nav-link">Home</a>
+        <a href="guide.html" class="text-white hover:text-gray-200 flex items-center nav-link">Guide</a>
+        <a href="emergency.html" class="text-white hover:text-gray-200 flex items-center nav-link">Emergency</a>
+        <a href="safest-path.html" class="text-white hover:text-gray-200 flex items-center nav-link">Safe Path</a>
+        <a href="share-live-location.html" class="text-white hover:text-gray-200 flex items-center nav-link">Share Location</a>
+        <a href="sos.html" class="text-white hover:text-gray-200 flex items-center nav-link">SOS</a>
+        <a href="community.html" class="text-white hover:text-gray-200 flex items-center nav-link">Community</a>
+        <a href="chatbot.html" class="text-white hover:text-gray-200 flex items-center nav-link">AI Chatbot</a>
+        <a href="about-us.html" class="text-white hover:text-gray-200 flex items-center nav-link">About Us</a>
+      </nav>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-pink-400 shadow">
+      <nav class="flex flex-col space-y-2 p-4"></nav>
+    </div>
+  </header>
+  <main class="max-w-7xl mx-auto py-8 px-6 flex-grow relative">
+
+    <!-- How to Use "Here Am" Section -->
+    <section class="bg-white p-6 rounded-xl shadow card fade-in mb-8">
+      <h3 class="text-2xl font-semibold text-pink-700 mb-2">How to Use "Here Am"</h3>
+      <ol class="list-decimal pl-6 text-gray-800 space-y-2">
+        <li><span class="font-semibold text-pink-600">Register/Login:</span> Download the Here Am app or access the website. Create your account with your phone/email and set up emergency contacts.</li>
+        <li><span class="font-semibold text-pink-600">Update Your Profile:</span> Add basic personal info, medical details, and select trusted contacts to alert in emergencies.</li>
+        <li><span class="font-semibold text-pink-600">Share Live Location:</span> Use the "Share Live Location" feature to let friends or family track you in real time when you feel unsafe or are traveling.</li>
+        <li><span class="font-semibold text-pink-600">SOS & Emergency:</span> In emergencies, tap the SOS button or shake your phone (if enabled) to instantly alert your contacts and share your live location.</li>
+        <li><span class="font-semibold text-pink-600">Community Alerts:</span> Report unsafe areas, view alerts, and help keep your local community safe.</li>
+        <li><span class="font-semibold text-pink-600">Safety Tips & Videos:</span> Access the "Guide" section for practical self-defense tips, interactive videos, and advice on staying safe.</li>
+        <li><span class="font-semibold text-pink-600">AI Chatbot:</span> Use the AI assistant for instant safety advice, risk assessment, and quick links to helplines.</li>
+        <li><span class="font-semibold text-pink-600">Explore More Features:</span> Try fake calls, quick routes, and more in the main menu to enhance your safety.</li>
+      </ol>
+      <p class="mt-4 text-pink-700 font-semibold">Remember: Stay aware, stay connected, and let "Here Am" be your companion wherever you go!</p>
+    </section>
+    <!-- Hero Banner -->
+    <section class="relative rounded-2xl overflow-hidden mb-8 shadow-lg fade-in">
+      <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80" class="w-full object-cover h-56 md:h-72" alt="Women Safety Hero Banner">
+      <div class="absolute inset-0 bg-pink-800 bg-opacity-40 flex flex-col justify-center items-center">
+        <h2 class="text-2xl md:text-4xl font-bold text-white drop-shadow-lg mb-2">Empower Your Journey</h2>
+        <p class="text-lg md:text-2xl text-pink-100 max-w-2xl text-center">Discover smart features, advanced safety tips, and a vibrant community protecting women—together.</p>
+      </div>
+    </section>
+
+    <!-- Watch These Essential Safety Topics Section -->
+    <section class="bg-pink-50 p-6 rounded-xl shadow card fade-in">
+      <div class="flex items-center mb-4">
+        <svg class="w-8 h-8 text-pink-600 mr-3" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 0 0-10 10c0 5.5 4.5 10 10 10s10-4.5 10-10A10 10 0 0 0 12 2zm0 16a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"/>
+        </svg>
+        <h3 class="text-xl font-semibold text-pink-600">Watch These Essential Safety Topics</h3>
+      </div>
+      <div class="mb-6">
+        <div class="swiper safetySwiper rounded-xl overflow-hidden">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide flex flex-col items-center p-4">
+              <img src="https://www.kwunion.com/wp-content/uploads/2020/07/self-defense.jpg" class="w-32 h-32 rounded-full shadow-lg mb-3 object-cover" alt="Verbal defense, women communicating">
+              <div class="text-center">
+                <strong class="text-pink-700">Verbal Self Defense</strong>
+                <p class="text-gray-700 text-sm">Use assertive voice and strong body language to deter threats.</p>
+              </div>
+            </div>
+            <div class="swiper-slide flex flex-col items-center p-4">
+              <img src="https://images.pexels.com/photos/4761794/pexels-photo-4761794.jpeg?auto=compress&w=400&h=400&fit=crop" class="w-32 h-32 rounded-full shadow-lg mb-3 object-cover" alt="Women practicing self defense">
+              <div class="text-center">
+                <strong class="text-pink-700">Self Defense Techniques</strong>
+                <p class="text-gray-700 text-sm">Practice techniques such as blocking, escape holds, and situational awareness.</p>
+              </div>
+            </div>
+            <div class="swiper-slide flex flex-col items-center p-4">
+              <img src="https://d1qumhq2zx0vxs.cloudfront.net/ArticleImages/Safety_tips_for_women_20190329111559921.jpg" class="w-32 h-32 rounded-full shadow-lg mb-3 object-cover" alt="Women sharing safety tips">
+              <div class="text-center">
+                <strong class="text-pink-700">Safety Tips</strong>
+                <p class="text-gray-700 text-sm">Share tips and look out for each other in your community.</p>
+              </div>
+            </div>
+            <div class="swiper-slide flex flex-col items-center p-4">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW6qPghQa-b801g0PdKV1dknb09xu5q0GatQ&s" class="w-32 h-32 rounded-full shadow-lg mb-3 object-cover" alt="Pepper spray defense">
+              <div class="text-center">
+                <strong class="text-pink-700">Pepper Spray Use</strong>
+                <p class="text-gray-700 text-sm">Carry and know how to use pepper spray in emergencies.</p>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-lg font-semibold text-pink-700 mb-2">Watch These Essential Safety Topics:</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="video-card bg-white p-3 rounded-2xl relative flex flex-col items-center shadow group" onclick="window.open('https://www.youtube.com/results?search_query=self+defense+techniques+for+women','_blank')">
+            <div class="relative w-full">
+              <img class="video-thumb" src="https://www.sheknows.com/wp-content/uploads/2016/01/GettyImages-835151772-1.jpg?w=1440" alt="Women Self Defense Pose"/>
+              <img src="https://cdn-icons-png.flaticon.com/512/197/197492.png" alt="Self Defense Icon" class="absolute left-3 top-3 w-10 h-10 rounded-full bg-white shadow-md border border-pink-200 p-1"/>
+              <span class="play-anim absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <svg viewBox="0 0 48 48"><polygon points="16,12 40,24 16,36" /></svg>
+              </span>
+            </div>
+            <p class="text-gray-700 mt-2 font-medium text-center">Self Defense Techniques for Women<br>
+              <a href="https://www.youtube.com/results?search_query=self+defense+techniques+for+women" target="_blank" class="underline text-pink-700">See current videos</a>
+            </p>
+          </div>
+          <!-- Safety Tips Every Woman Should Know -->
+          <div class="video-card bg-white p-3 rounded-2xl relative flex flex-col items-center shadow group" onclick="window.open('https://www.youtube.com/results?search_query=safety+tips+every+woman+should+know','_blank')">
+            <div class="relative w-full">
+              <img class="video-thumb" src="https://d1qumhq2zx0vxs.cloudfront.net/ArticleImages/Safety_tips_for_women_20190329111559921.jpg" alt="Women safety tips"/>
+              <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Safety Shield" class="absolute left-3 top-3 w-10 h-10 rounded-full bg-white shadow-md border border-pink-200 p-1"/>
+              <span class="play-anim absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <svg viewBox="0 0 48 48"><polygon points="16,12 40,24 16,36" /></svg>
+              </span>
+            </div>
+            <p class="text-gray-700 mt-2 font-medium text-center">Safety Tips Every Woman Should Know<br>
+              <a href="https://www.youtube.com/results?search_query=safety+tips+every+woman+should+know" target="_blank" class="underline text-pink-700">See current videos</a>
+            </p>
+          </div>
+          <!-- How to Use Pepper Spray -->
+          <div class="video-card bg-white p-3 rounded-2xl relative flex flex-col items-center shadow group" onclick="window.open('https://www.youtube.com/results?search_query=how+to+use+pepper+spray+self+defense','_blank')">
+            <div class="relative w-full">
+              <img class="video-thumb" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW6qPghQa-b801g0PdKV1dknb09xu5q0GatQ&s" alt="Pepper spray defense"/>
+              <img src="https://cdn-icons-png.flaticon.com/512/3304/3304510.png" alt="Pepper Spray Icon" class="absolute left-3 top-3 w-10 h-10 rounded-full bg-white shadow-md border border-pink-200 p-1"/>
+              <span class="play-anim absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <svg viewBox="0 0 48 48"><polygon points="16,12 40,24 16,36" /></svg>
+              </span>
+            </div>
+            <p class="text-gray-700 mt-2 font-medium text-center">How to Use Pepper Spray<br>
+              <a href="https://www.youtube.com/results?search_query=how+to+use+pepper+spray+self+defense" target="_blank" class="underline text-pink-700">See current videos</a>
+            </p>
+          </div>
+          <!-- Verbal Self Defense -->
+          <div class="video-card bg-white p-3 rounded-2xl relative flex flex-col items-center shadow group" onclick="window.open('https://www.youtube.com/results?search_query=verbal+self+defense+for+women','_blank')">
+            <div class="relative w-full">
+              <img class="video-thumb" src="https://www.kwunion.com/wp-content/uploads/2020/07/self-defense.jpg" alt="Verbal defense, women communicating"/>
+              <img src="https://cdn-icons-png.flaticon.com/512/130/130304.png" alt="Verbal Defense Icon" class="absolute left-3 top-3 w-10 h-10 rounded-full bg-white shadow-md border border-pink-200 p-1"/>
+              <span class="play-anim absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <svg viewBox="0 0 48 48"><polygon points="16,12 40,24 16,36" /></svg>
+              </span>
+            </div>
+            <p class="text-gray-700 mt-2 font-medium text-center">Verbal Self Defense<br>
+              <a href="https://www.youtube.com/results?search_query=verbal+self+defense+for+women" target="_blank" class="underline text-pink-700">See current videos</a>
+            </p>
+          </div>
+        </div>
+        <div class="mt-4 text-pink-700">
+          <a href="https://www.youtube.com/results?search_query=women+safety+self+defence" class="underline" target="_blank">See more women safety videos on YouTube</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="bg-pink-400 text-white py-4 mt-8">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+      <div class="flex items-center mb-2 md:mb-0">
+        <span class="font-semibold">Here Am &copy; 2025</span>
+      </div>
+      <div class="flex items-center">
+        <a href="#" class="social-icon" aria-label="Instagram"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5.25-.75a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z"/></svg></a>
+        <a href="#" class="social-icon" aria-label="Facebook"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.594 0 0 .594 0 1.326v21.348C0 23.406.594 24 1.326 24H12.82v-9.294H9.692v-3.622h3.127V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.797.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116C23.406 24 24 23.406 24 22.674V1.326C24 .594 23.406 0 22.675 0"/></svg></a>
+        <a href="#" class="social-icon" aria-label="Twitter"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.897-.959-2.178-1.555-3.594-1.555-2.717 0-4.924 2.208-4.924 4.924 0 .39.043.765.127 1.124-4.09-.205-7.719-2.165-10.148-5.144-.424.722-.666 1.561-.666 2.475 0 1.708.87 3.216 2.188 4.099-.807-.026-1.566-.247-2.229-.616v.062c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.416-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067C2.292 21.29 5.026 22 7.872 22c9.4 0 14.555-7.779 14.555-14.555 0-.223-.005-.444-.015-.665.999-.721 1.868-1.625 2.542-2.671z"/></svg></a>
+      </div>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // Hamburger menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger?.addEventListener('click', () => {
+      navMenu.classList.toggle('hidden');
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Fade-in animation for cards
+    document.querySelectorAll('.fade-in').forEach((el, idx) => {
+      setTimeout(() => {
+        el.style.opacity = 1;
+      }, idx * 150 + 200);
+    });
+
+    // SwiperJS for safety tips carousel
+    var safetySwiper = new Swiper('.safetySwiper', {
+      slidesPerView: 1,
+      spaceBetween: 8,
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.safetySwiper .swiper-button-next',
+        prevEl: '.safetySwiper .swiper-button-prev',
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+        },
+        1024: {
+          slidesPerView: 3,
+        }
+      }
+    });
+  </script>
+</body>
+</html>
